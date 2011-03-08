@@ -9,6 +9,7 @@ GEM
       json (~> 1.4.6)
       term-ansicolor (~> 1.0.5)
     diff-lcs (1.1.2)
+    fakefs (0.3.1)
     gherkin (2.3.3)
       json (~> 1.4.6)
     git (1.2.5)
@@ -18,7 +19,6 @@ GEM
       rake
     json (1.4.6)
     rake (0.8.7)
-    rcov (0.9.9)
     rspec (2.3.0)
       rspec-core (~> 2.3.0)
       rspec-expectations (~> 2.3.0)
@@ -36,7 +36,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   cucumber
+  fakefs (~> 0.3.1)
   jeweler (~> 1.5.2)
-  rcov
   rspec (~> 2.3.0)
   yard (~> 0.6.0)
