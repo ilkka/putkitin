@@ -19,4 +19,5 @@ group :development do
     end
   end
   gem "fakefs", "~> 0.3.1"
+  gem "spork", "~> 0.9.0.rc"
 end

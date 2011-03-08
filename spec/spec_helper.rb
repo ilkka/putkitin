@@ -1,15 +1,30 @@
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'rspec'
-require 'putkitin'
+require 'rubygems'
+require 'spork'
 
-require 'fakefs/safe'
-require 'fakefs/spec_helpers'
+Spork.prefork do
+  # Loading more in this block will cause your tests to run faster. However,
+  # if you change any configuration or code from libraries loaded here, you'll
+  # need to restart spork for it take effect.
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+  $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+  $LOAD_PATH.unshift(File.dirname(__FILE__))
+  require 'rspec'
+  require 'fakefs/safe'
+  require 'fakefs/spec_helpers'
 
-RSpec.configure do |config|
+  # Requires supporting files with custom matchers and macros, etc,
+  # in ./support/ and its subdirectories.
+  Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
   
+end
+
+Spork.each_run do
+  # This code will be run each time you run your specs.
+
+  require 'putkitin'
+
+  RSpec.configure do |config|
+    
+  end
+
 end
