@@ -1,7 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-require 'socket'
-
 OriginalHosts = <<EOS
 192.168.0.1 #{Socket.gethostname}
 127.0.0.1 localhost.localdomain localhost
