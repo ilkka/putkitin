@@ -32,13 +32,13 @@ describe Putkitin::Pipe do
       cmd.should =~ /-L1234:example.com:1234/
     }
     gw = Putkitin::Gateway.new "gateway.example.com"
-    pipe = gw.new_pipe "example.com", "1234"
+    pipe = gw.pipe "example.com", "1234"
     pipe.close
   end
   
   it "alters the hosts file" do
     gw = Putkitin::Gateway.new "gateway.example.com"
-    pipe = gw.new_pipe "example.com", "1234"
+    pipe = gw.pipe "example.com", "1234"
     File.read("/etc/hosts").should == <<-EOS
 192.168.0.1 #{Socket.gethostname}
 127.0.0.1 localhost.localdomain localhost example.com
