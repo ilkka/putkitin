@@ -49,6 +49,7 @@ describe Putkitin::Pipe do
     IO.should_receive(:popen) { |cmd|
       cmd.should =~ /ssh/
       cmd.should =~ /-L1234:example.com:1234/
+      cmd.should =~ /gateway.example.com/
     }
     gw = Putkitin::Gateway.new "gateway.example.com"
     pipe = gw.pipe "example.com", "1234"
