@@ -10,6 +10,7 @@ Spork.prefork do
   $LOAD_PATH.unshift(File.dirname(__FILE__))
   require 'rspec'
   require 'socket'
+  require 'tempfile'
   require 'fakefs/safe'
   require 'fakefs/spec_helpers'
 
