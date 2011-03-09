@@ -17,6 +17,27 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 EOS
 
+# this netstat-like stuff pilfered from
+# http://snippets.dzone.com/posts/show/12653
+
+# This regex pattern groks lines on /proc/net/tcp
+TCP_STAT_PAT = /^\s*\d+:\s+(.{8}):(.{4})\s+(.{8}):(.{4})\s+(.{2})/
+
+# Check for a connection on a given port
+# that is in the "listening" state.
+#
+# @param port [int] port number.
+# @return [Boolean] true if there's a listening connection.
+def listening_on_port?(port)
+  File.open('/proc/net/tcp').map { |line|
+    line.strip.match(TCP_STAT_PAT) { |match|
+      [match[2].to_i(16), match[5]]
+    }
+  }.any? { |c|
+    c && c[1] == '0A' && c[0] == port
+  }
+end
+
 describe Putkitin::Pipe do
   include  FakeFS::SpecHelpers
   
