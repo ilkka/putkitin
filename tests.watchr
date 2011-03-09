@@ -62,8 +62,10 @@ def run(cmd)
   puts "Running #{cmd}"
   if system(cmd)
     notify_success
+    true
   else
     notify_failure
+    false
   end
 end
 
@@ -71,7 +73,13 @@ end
 #
 # @param specfile [String] path to specfile.
 def spec(specfile)
-  run(%Q(rspec #{rspec_opts} #{specfile}))
+  if run(%Q(rspec #{rspec_opts} #{specfile}))
+    if @last_run_failed
+      run_all_specs && @last_run_failed = false
+    end
+  else
+    @last_run_failed = true
+  end
 end
 
 # Run a single feature.
