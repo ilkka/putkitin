@@ -5,6 +5,7 @@ describe Putkitin::Gateway do
 
   before :each do
     @gw = Putkitin::Gateway.new 'example.com'
+    FakeFS::FileUtils.mkdir_p Dir.tmpdir
   end
   
   it "takes ssh host as argument" do
