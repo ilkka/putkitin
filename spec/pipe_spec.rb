@@ -58,6 +58,12 @@ describe Putkitin::Pipe do
   end
   
   it "alters the hosts file" do
+    IO.should_receive(:popen) { |cmd|
+      cmd.should =~ /ssh/
+      cmd.should =~ /-L1234:example.com:1234/
+      cmd.should =~ /gateway.example.com/
+      IO.pipe
+    }
     gw = Putkitin::Gateway.new "gateway.example.com"
     pipe = gw.pipe "example.com", "1234"
     File.read("/etc/hosts").should == <<-EOS
