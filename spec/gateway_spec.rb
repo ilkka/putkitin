@@ -6,6 +6,10 @@ describe Putkitin::Gateway do
   before :each do
     @gw = Putkitin::Gateway.new 'example.com'
     FakeFS::FileUtils.mkdir_p Dir.tmpdir
+    FakeFS::FileUtils.mkdir_p '/etc'
+    File.open('/etc/hosts', 'w') do |f|
+      f.write '127.0.0.1 localhost'
+    end
   end
   
   it "takes ssh host as argument" do
