@@ -43,14 +43,17 @@ describe Putkitin::Pipe do
     File.open("/etc/hosts", "w") do |f|
       f.write OriginalHosts
     end
+    # fakefs messes with tempfile so re-make the temp dir
+    FakeFS::FileUtils.mkdir_p Dir.tmpdir
   end
 
   it "opens ssh tunnels" do
     IO.should_receive(:popen) { |cmd|
       cmd.should =~ /ssh/
       cmd.should =~ /-L1234:example.com:1234/
+      cmd.should =~ /-nN/
       cmd.should =~ /gateway.example.com/
-      IO.pipe
+      IO.pipe[0]
     }
     gw = Putkitin::Gateway.new "gateway.example.com"
     pipe = gw.pipe "example.com", "1234"
@@ -58,6 +61,9 @@ describe Putkitin::Pipe do
   end
   
   it "alters the hosts file" do
+    IO.should_receive(:popen) { |cmd|
+      IO.pipe[0]
+    }
     gw = Putkitin::Gateway.new "gateway.example.com"
     pipe = gw.pipe "example.com", "1234"
     File.read("/etc/hosts").should == <<-EOS
@@ -67,7 +73,7 @@ describe Putkitin::Pipe do
 127.0.1.1 #{Socket.gethostname}
 
 # The following lines are desirable for IPv6 capable hosts
-::1     localhost ip6-localhost ip6-loopback
+::1     localhost ip6-localhost ip6-loopback example.com
 fe00::0 ip6-localnet
 ff00::0 ip6-mcastprefix
 ff02::1 ip6-allnodes

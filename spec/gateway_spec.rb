@@ -5,6 +5,11 @@ describe Putkitin::Gateway do
 
   before :each do
     @gw = Putkitin::Gateway.new 'example.com'
+    FakeFS::FileUtils.mkdir_p Dir.tmpdir
+    FakeFS::FileUtils.mkdir_p '/etc'
+    File.open('/etc/hosts', 'w') do |f|
+      f.write '127.0.0.1 localhost'
+    end
   end
   
   it "takes ssh host as argument" do
@@ -12,6 +17,10 @@ describe Putkitin::Gateway do
   end
 
   it "returns a Pipe object" do
+    IO.should_receive(:popen) { |cmd|
+      cmd.should =~ /^ssh/
+      IO.pipe   
+    }
     pipe = @gw.pipe 'example.com', '1234'
     pipe.should be_a Putkitin::Pipe
   end
