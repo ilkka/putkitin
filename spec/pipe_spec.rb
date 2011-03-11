@@ -45,6 +45,7 @@ describe Putkitin::Pipe do
     end
     # fakefs messes with tempfile so re-make the temp dir
     FakeFS::FileUtils.mkdir_p Dir.tmpdir
+    @gw = Putkitin::Gateway.new "gateway.example.com"
   end
 
   it "opens ssh tunnels" do
@@ -55,17 +56,25 @@ describe Putkitin::Pipe do
       cmd.should =~ /gateway.example.com/
       IO.pipe[0]
     }
-    gw = Putkitin::Gateway.new "gateway.example.com"
-    pipe = gw.pipe "example.com", "1234"
+    pipe = @gw.pipe "example.com", 1234
     pipe.close
   end
   
+  it "opens tunnels for multiple ports" do
+    IO.should_receive(:popen) { |cmd|
+      cmd.should =~ /-L1234:example.com:1234/
+      cmd.should =~ /-L4321:example.com:4321/
+      IO.pipe[0]
+    }
+    pipe = @gw.pipe "example.com", [1234, 4321]
+    pipe.close
+  end
+
   it "alters the hosts file" do
     IO.should_receive(:popen) { |cmd|
       IO.pipe[0]
     }
-    gw = Putkitin::Gateway.new "gateway.example.com"
-    pipe = gw.pipe "example.com", "1234"
+    pipe = @gw.pipe "example.com", 1234
     File.read("/etc/hosts").should == <<-EOS
 192.168.0.1 #{Socket.gethostname}
 127.0.0.1 localhost.localdomain localhost example.com
