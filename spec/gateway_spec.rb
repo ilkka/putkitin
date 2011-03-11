@@ -17,6 +17,10 @@ describe Putkitin::Gateway do
   end
 
   it "returns a Pipe object" do
+    IO.should_receive(:popen) { |cmd|
+      cmd.should =~ /^ssh/
+      IO.pipe   
+    }
     pipe = @gw.pipe 'example.com', '1234'
     pipe.should be_a Putkitin::Pipe
   end
