@@ -12,6 +12,19 @@ module Putkitin
     # @return [Pipe] open pipe.
     def initialize(gw, host, port)
       @io = IO.popen("ssh -L#{port}:#{host}:#{port} #{gw.hostname}")
+      lines = []
+      File.open('/etc/hosts').each do |line|
+        line = case line
+               when /^(127\.0\.0\.1|::1)\s.*/
+                 line.chomp + " " + host + "\n"
+               else
+                 line
+               end
+        lines << line
+      end
+      File.open('/etc/hosts', 'w') do |f|
+        lines.each { |l| f.write l }
+      end
     end
 
     # Close this pipe.
