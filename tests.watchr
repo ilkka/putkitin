@@ -14,6 +14,14 @@ def have_notify_send?
   end
 end
 
+def have_growl?
+  @have_growl ||= begin
+                    require 'growl'
+                  rescue LoadError
+                    false
+                  end
+end
+
 def error_icon_name 
   "gtk-dialog-error"
 end
@@ -43,6 +51,8 @@ end
 def notify_success
   if have_notify_send?
     notify success_icon_name, "All green!", "Now write more tests :)"
+  elsif have_growl?
+    Growl.notify_ok "All green!"
   end
 end
 
@@ -51,6 +61,8 @@ end
 def notify_failure
   if have_notify_send?
     notify error_icon_name, "Something is broken", "Now go fix it :)"
+  elsif have_growl?
+    Growl.notify_error "Something is broken"
   end
 end
 
