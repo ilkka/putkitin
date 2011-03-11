@@ -43,6 +43,8 @@ describe Putkitin::Pipe do
     File.open("/etc/hosts", "w") do |f|
       f.write OriginalHosts
     end
+    # fakefs messes with tempfile so re-make the temp dir
+    FakeFS::FileUtils.mkdir_p Dir.tmpdir
   end
 
   it "opens ssh tunnels" do
