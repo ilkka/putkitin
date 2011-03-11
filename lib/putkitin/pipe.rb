@@ -8,11 +8,12 @@ module Putkitin
     #
     # @param gw [Gateway] ssh gateway.
     # @param host [String] target hostname.
-    # @param port [Int] port number.
+    # @param port [int, Array] port number(s).
     # @return [Pipe] open pipe.
-    def initialize(gw, host, port)
+    def initialize(gw, host, ports)
       @host = host
-      @io = IO.popen("ssh -nN -L#{port}:#{host}:#{port} #{gw.hostname}")
+      cmd = 
+      @io = IO.popen(sshcmd(gw, host, ports))
       lines = []
       File.open('/etc/hosts').each do |line|
         line = case line
@@ -45,6 +46,14 @@ module Putkitin
       File.open('/etc/hosts', 'w') do |f|
         lines.each { |l| f.write l }
       end
+    end
+
+    private
+
+    def sshcmd(gateway, host, ports)
+      "ssh -nN" + ([] << ports).flatten.reduce("") { |s,p|
+        s + " -L#{p}:#{host}:#{p}"
+      } + " #{gateway.hostname}"
     end
 
   end
