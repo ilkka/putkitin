@@ -33,4 +33,5 @@ Trollop::die :ports, 'is required' unless opts[:ports]
 Trollop::die :ports, 'is not a valid port number' unless opts[:ports].all? { |p| p > 0 && p < 65536 }
 
 gw = Putkitin::Gateway.new opts[:gateway]
-p opts
+pipe = gw.pipe opts[:target], opts[:ports]
+
