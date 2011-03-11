@@ -12,7 +12,7 @@ module Putkitin
     # @return [Pipe] open pipe.
     def initialize(gw, host, port)
       @host = host
-      @io = IO.popen("ssh -L#{port}:#{host}:#{port} #{gw.hostname}")
+      @io = IO.popen("ssh -nN -L#{port}:#{host}:#{port} #{gw.hostname}")
       lines = []
       File.open('/etc/hosts').each do |line|
         line = case line
