@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+require 'trollop'
+
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require 'putkitin'
+
+opts = Trollop::options do
+  version <<-EOS
+putkitin v#{File.read(File.join(File.dirname(__FILE__), '..', 'VERSION'))}
+Copyright (C) 2011 Ilkka Laukkanen <ilkka.s.laukkanen@gmail.com>
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the file LICENSE.txt for details.
+EOS
+  banner <<-EOS
+putkitin sets up SSH port forwards and aliases the target hostname to
+localhost in /etc/hosts so that URIs etc. work as intended.
+
+Usage: putkitin OPTIONS
+
+Where OPTIONS are:
+EOS
+  opt :gateway, "SSH gateway (user@hostname)", :type => :string
+  opt :gateway_port, "SSH gateway SSH port", :type => :int, :default => 22
+  opt :target, "Port forwarding target hostname", :type => :string
+  opt :ports, "Ports to forward", :type => :ints
+end
+
+Trollop::die :gateway, 'is required' unless opts[:gateway]
+Trollop::die :gateway_port, 'is not a valid port number' unless (opts[:gateway_port] > 0 && opts[:gateway_port] < 65536)
+Trollop::die :target, 'is required' unless opts[:target]
+Trollop::die :ports, 'is required' unless opts[:ports]
+Trollop::die :ports, 'is not a valid port number' unless opts[:ports].all? { |p| p > 0 && p < 65536 }
+
+gw = Putkitin::Gateway.new opts[:gateway]
+pipe = gw.pipe opts[:target], opts[:ports]
+
